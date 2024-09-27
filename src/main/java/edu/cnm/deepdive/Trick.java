@@ -1,20 +1,61 @@
 package edu.cnm.deepdive;
 
+import edu.cnm.deepdive.model.Card;
+import edu.cnm.deepdive.model.Deck;
+import edu.cnm.deepdive.model.Suit;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 public class Trick {
 
   public static void main(String[] args) {
-    // TODO create and shuffle a deck of cards.
-    // TODO create two empty lists - one for the black pile, and one for the red pile.
-    // TODO while the deck is not empty, deal cards, two at a time:
-    //  if first card is black, put the second into the black pile;
-    //  otherwise put the second card into the red pile.
-    // TODO Pick a random number between 0 and the size of the smaller of the two piles (inclusive).
-    // TODO Swap that picked number of cards between the two piles.
-    // TODO Count the number of black cards in the black pule and the number of cards in the red pile.
+    Deck deck =  createDeck();
+    List<Card> blackPile = new ArrayList<Card>();
+    List<Card> redPile = new ArrayList<>();
+    distributeCards(createDeck(), blackPile, redPile);
+    int numCardsToSwap = new Random().nextInt(1 + Math.min(blackPile.size(), redPile.size()));
+    swapCards(blackPile, redPile, numCardsToSwap);
+    int blackCount = countCardsForColor(blackPile, Suit.Color.BLACK);
+    int redCount = countCardsForColor(redPile, Suit.Color.RED);
+
     // TODO Display the contents of each pile in color order, followed by the corresponding count.
-
-
 
   }
 
+  private static Deck createDeck() {
+    Deck deck = new Deck();
+    deck.shuffle();
+    return deck;
+  }
+
+  private static void distributeCards(Deck deck, List<Card> blackPile, List<Card> redPile) {
+    while(!deck.isEmpty()) {
+      Card selector = deck.deal();
+      Card next = deck.deal();
+      if(selector.getSuit().getColor() == Suit.Color.BLACK) {
+        blackPile.add(next);
+      } else {
+        redPile.add(next);
+        }
+      }
+    }
+  }
+
+  private static void swapCards(List<Card> blackPile, List<Card> redPile, int numCardsToSwap) {
+    for (int i = 0; i < numCardsToSwap; i++) {
+      blackPile.add(redPile.removeFirst());
+      redPile.add(blackPile.removeFirst());
+    }
+  }
+    private static int countCardsForColor(List<Card> cards, Suit.Color color) {
+      int count = 0;
+      for(Card card : cards) {
+        if(card.getSuit().getColor() == color) {
+          count++;
+        }
+
+      }
+      return count;
+    }
 }
