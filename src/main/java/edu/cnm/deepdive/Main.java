@@ -1,5 +1,8 @@
 package edu.cnm.deepdive;
 
+import edu.cnm.deepdive.model.Deck;
+import edu.cnm.deepdive.service.ColorComparator;
+
 public class Main {
 
 
@@ -9,6 +12,8 @@ public class Main {
     deck.shuffle();
     System.out.println(deck);
     deck.sort();
+    System.out.println(deck);
+    deck.sort(new ColorComparator());
     System.out.println(deck);
 /*
     while (!deck.isEmpty()) {
