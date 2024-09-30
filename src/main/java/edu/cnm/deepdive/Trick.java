@@ -3,14 +3,18 @@ package edu.cnm.deepdive;
 import edu.cnm.deepdive.model.Card;
 import edu.cnm.deepdive.model.Deck;
 import edu.cnm.deepdive.model.Suit;
+import edu.cnm.deepdive.model.Suit.Color;
+import edu.cnm.deepdive.service.ColorComparator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public class Trick {
 
+  private static final String TRICK_PILE_FORMAT = "%1$s pile: %2$s; %1$s card count = %3$d%n";
+
   public static void main(String[] args) {
-    Deck deck =  createDeck();
+    Deck deck = createDeck();
     List<Card> blackPile = new ArrayList<Card>();
     List<Card> redPile = new ArrayList<>();
     distributeCards(createDeck(), blackPile, redPile);
@@ -18,9 +22,11 @@ public class Trick {
     swapCards(blackPile, redPile, numCardsToSwap);
     int blackCount = countCardsForColor(blackPile, Suit.Color.BLACK);
     int redCount = countCardsForColor(redPile, Suit.Color.RED);
-
-    // TODO Display the contents of each pile in color order, followed by the corresponding count.
-
+    ColorComparator comparator = new ColorComparator();
+    blackPile.sort(comparator);
+    redPile.sort(comparator);
+    displayPile(blackPile, Color.BLACK, blackCount);
+    displayPile(redPile, Color.RED, redCount);
   }
 
   private static Deck createDeck() {
@@ -30,14 +36,13 @@ public class Trick {
   }
 
   private static void distributeCards(Deck deck, List<Card> blackPile, List<Card> redPile) {
-    while(!deck.isEmpty()) {
+    while (!deck.isEmpty()) {
       Card selector = deck.deal();
       Card next = deck.deal();
-      if(selector.getSuit().getColor() == Suit.Color.BLACK) {
+      if (selector.getSuit().getColor() == Suit.Color.BLACK) {
         blackPile.add(next);
       } else {
         redPile.add(next);
-        }
       }
     }
   }
@@ -48,14 +53,21 @@ public class Trick {
       redPile.add(blackPile.removeFirst());
     }
   }
-    private static int countCardsForColor(List<Card> cards, Suit.Color color) {
-      int count = 0;
-      for(Card card : cards) {
-        if(card.getSuit().getColor() == color) {
-          count++;
-        }
 
+  private static int countCardsForColor(List<Card> cards, Suit.Color color) {
+    int count = 0;
+    for (Card card : cards) {
+      if (card.getSuit().getColor() == color) {
+        count++;
       }
-      return count;
+
     }
+    return count;
+
+  }
+
+  private static void displayPile(List<Card> cards, Suit.Color color, int count) {
+    System.out.printf(TRICK_PILE_FORMAT, color, cards, count);
+  }
 }
+
