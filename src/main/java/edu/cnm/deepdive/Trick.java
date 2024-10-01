@@ -4,8 +4,8 @@ import edu.cnm.deepdive.model.Card;
 import edu.cnm.deepdive.model.Deck;
 import edu.cnm.deepdive.model.Suit;
 import edu.cnm.deepdive.model.Suit.Color;
-import edu.cnm.deepdive.service.ColorComparator;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
@@ -22,7 +22,18 @@ public class Trick {
     swapCards(blackPile, redPile, numCardsToSwap);
     int blackCount = countCardsForColor(blackPile, Suit.Color.BLACK);
     int redCount = countCardsForColor(redPile, Suit.Color.RED);
-    ColorComparator comparator = new ColorComparator();
+    Comparator<Card> comparator = (card1, card2) -> {
+      Suit suit1 = card1.getSuit();
+      Suit suit2 = card2.getSuit();
+      int comparison = suit1.getColor().compareTo(suit2.getColor());
+      if (comparison == 0) {
+        comparison = suit1.compareTo(suit2);
+        if (comparison == 0) {
+          comparison = card1.getRank().compareTo(card2.getRank());
+        }
+      }
+      return comparison;
+    };
     blackPile.sort(comparator);
     redPile.sort(comparator);
     displayPile(blackPile, Color.BLACK, blackCount);
@@ -70,4 +81,6 @@ public class Trick {
     System.out.printf(TRICK_PILE_FORMAT, color, cards, count);
   }
 }
+
+
 
